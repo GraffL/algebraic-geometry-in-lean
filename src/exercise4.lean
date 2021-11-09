@@ -55,7 +55,31 @@ begin
   split,
   {
     show hasAllJoins A → hasAllMeets A,
-    sorry,
+    intro hAllJoins,
+    intro M,
+    let N := {a : A | ∀ m ∈ M, m ≥ a},
+    cases hAllJoins N with joinN hJoinN,
+    use joinN,
+    split,
+    {
+      show ∀ m ∈ M, m ≥ joinN,
+      intro m,
+      intro hmM,
+      have h : ∀ n ∈ N, m ≥ n :=
+      begin
+        intro n,
+        intro hnN,
+        simp at hnN,
+        exact hnN m hmM,
+      end,
+      exact hJoinN.right m h,
+    },
+    {
+      show ∀ a' : A, (∀ m ∈ M, m ≥ a') → joinN ≥ a',
+      intro a',
+      intro h,
+      exact hJoinN.left a' h,
+    },
   },
   {
     show hasAllMeets A → hasAllJoins A,
