@@ -13,10 +13,12 @@ lemma join_is_unique [partial_order A] {M : set A} {a b : A} (aM : isJoin M a) (
 begin
   apply le_antisymm,
   {
+    show a ≤ b,
     apply aM.right,
     exact bM.left,
   },
   {
+    show b ≤ a,
     apply bM.right,
     exact aM.left,
   },
@@ -82,6 +84,8 @@ begin
     },
   },
   {
+    -- Note that this direction is exactly the same as (dual of) the first
+    -- just with all ≥ replaced by ≤ and all occurences of "join" by "meet"
     show hasAllMeets A → hasAllJoins A,
     intro hAllMeets,
     intro M,
