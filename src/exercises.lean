@@ -44,7 +44,12 @@ def exercise2a {A: Type u} {B : Type u} [partial_order A] [partial_order B]
   -- Aufgabe 2b)
   -- --> analog zu 2a)
 
-  -- ###################################
+-- ###################################
+-- Aufgabe 4
+--def supremum {A: Type u} [partial_order A] (M ⊆ A) (m ∈ A) : 
+
+
+-- ###################################
 -- Aufgabe 6
 -- Aufgabe 6a)
 def ideal.intersection {R : Type u} [comm_semiring R] (I : ideal R) (J : ideal R) : 
@@ -79,27 +84,3 @@ def ideal.intersection {R : Type u} [comm_semiring R] (I : ideal R) (J : ideal R
   }
 
 
--- Unfertig
-
-variable {R : Type u}
-
-def ideal.root {R : Type u} [comm_semiring R] (I : ideal R) :
-  ideal R :=
-    {
-      carrier := {x : R | ∃ (n : ℕ), x^n ∈ I},
-      zero_mem' := begin
-        use 1,
-        rw pow_one,
-        apply I.zero_mem',
-      end,
-      add_mem' := begin
-        intros a b,  
-        intros aInRadical bInRadical,
-        cases aInRadical with n aPownInI,
-        cases bInRadical with m bPownInI,
-        use n+m,
-        rw add_pow a b (n+m),
-        sorry
-      end,
-      smul_mem' := sorry
-    }
