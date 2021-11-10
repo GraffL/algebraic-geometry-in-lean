@@ -28,6 +28,9 @@ def supsetrel {Y} : preorder (set Y) := {
   end,
 }
 
+-- exercise 1a
+-- use @galois_connection to be able to provide all arguments explicitly
+-- in particular we want to provide the preorders that way to be able to use different ones on P(X) and P(Y)
 lemma ex1a (R : X → Y → Prop): @galois_connection (set X) (set Y) subsetrel supsetrel (VR R) (IR R) := begin
   intros S T,
   split,
