@@ -46,19 +46,71 @@ def exercise2a {A: Type u} {B : Type u} [partial_order A] [partial_order B]
 
 
 
+
 open_locale big_operators
+
 -- Aufgabe 2c)
 def ideal_of_subset {R : Type} [comm_semiring R] (S : set R) : ideal R :=
 {
-  carrier := {lin_comb | ∃ n : finset ℕ, ∃ r : ℕ → R, ∃ s : ℕ → S, lin_comb = ∑ i in n, r i * s i},
+  --carrier := {lin_comb | ∃ n : ℕ, ∃ r : ℕ → R, ∃ s : ℕ → S, lin_comb = ∑ i in finset.range(n), r i * s i},
+  carrier := {x : R | ∀ I : ideal R, S ⊆ I → x ∈ I},
   zero_mem' := begin
-    sorry,  
+    intros I _,
+    exact I.zero_mem',
   end,
   add_mem' := sorry,
   smul_mem' := sorry,
 }
 
 notation `⟨` S `⟩` := ideal_of_subset S 
+
+lemma ideal_of_extensive {R : Type} [comm_semiring R] (S : set R) : S ⊆ ⟨S⟩ :=
+begin
+  intros s hs,
+  intros I hSI,
+  apply hSI,
+  assumption,
+end
+
+lemma ideal_of_mono {R : Type} [comm_semiring R] {S : set R} {T : set R} : S ⊆ T → ⟨S⟩.carrier ⊆ ⟨T⟩.carrier :=
+begin
+  intro hST,
+  intro x,
+  intro hx,
+  intros I hTI,
+  have hSI : S ⊆ I := begin
+    exact set.subset.trans hST hTI,
+  end,
+  specialize hx I hSI,
+  assumption,
+end
+
+lemma ideal_of_ideal {R : Type} [comm_semiring R] {I : ideal R} : ⟨I.carrier⟩ = I :=
+begin
+  ext,
+  split,
+  {
+    intro h,
+    specialize h I,
+    apply h,
+    refl,
+  },
+  {
+    intro h,
+    intros J hIJ,
+    apply hIJ,
+    assumption,
+  },
+end
+
+lemma ideal_of_idempotent {R : Type} [comm_semiring R] {S : set R} : ⟨S⟩ = ⟨⟨S⟩.carrier⟩ :=
+begin
+  rw ideal_of_ideal,
+end
+
+-- The previous three lemmas together show that ⟨_⟩ is a closure operator
+--lemma ideal_of_is_clos_op {R : Type} [comm_semiring R] : (closure_operator (λ S, (ideal_of_subset S).carrier))
+
 
 -- Aufgabe 2d)
 def radical_of_ideal {R : Type} [comm_semiring R] (I : ideal R) : ideal R :=
@@ -90,3 +142,58 @@ def radical_of_ideal {R : Type} [comm_semiring R] (I : ideal R) : ideal R :=
 }
 
 notation `√` I := radical_of_ideal I
+
+def is_radical {R : Type} [comm_semiring R] (I : ideal R) : Prop :=
+  ∀x : R, (∃ n : ℕ, x^n ∈ I) → x ∈ I
+
+lemma radical_of_ideal_is_radical {R : Type} [comm_semiring R] (I : ideal R) : (is_radical √I) := 
+begin
+  intros x h,
+  cases h with n h,
+  cases h with m h,
+  use n*m,
+  rwa pow_mul,
+end
+
+lemma radical_of_is_extensive {R : Type} [comm_semiring R] (I : ideal R) : I.carrier ⊆ √ I :=
+begin
+  intros x hxI,
+  use 1,
+  simp,
+  assumption,
+end
+
+lemma radical_of_is_mono {R : Type} [comm_semiring R] {I : ideal R} {J : ideal R} : 
+  I.carrier ⊆ J → (√I).carrier ⊆ √J :=
+begin
+  intro hIJ,
+  intros x hxRI,
+  cases hxRI with n hxI,
+  use n,
+  apply hIJ,
+  assumption,
+end
+
+lemma radical_of_radical {R : Type} [comm_semiring R] {I : ideal R}: (is_radical I) → (√I) = I :=
+begin
+  intro h,
+  ext,
+  split,
+  {
+    intro hxRI,
+    apply h,
+    exact hxRI,
+  },
+  {
+    apply radical_of_is_extensive I,
+  },
+end
+
+lemma radical_of_is_idempotent {R : Type} [comm_semiring R] {I : ideal R} : (√I) = √√I :=
+begin
+  rw radical_of_radical (radical_of_ideal_is_radical I),
+end
+
+-- The previous three lemmas together show that √_ is a closure operator
+--lemma radical_is_closure_op {R : Type} [comm_semiring R] : (closure_operator (λ (I : ideal R), radical_of_ideal I))
+
