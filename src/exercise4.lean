@@ -114,3 +114,6 @@ begin
     },
   },
 end
+
+-- Exercise 4(c)
+-- 

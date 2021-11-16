@@ -9,6 +9,11 @@ import data.nat.choose.sum
 
 universe u 
 
+def f: empty → empty := begin
+  intro h,
+  cases h,
+end
+
 -- ###################################
 -- Aufgabe 2
 -- Aufgabe 2a)
@@ -58,11 +63,81 @@ def ideal_of_subset {R : Type} [comm_semiring R] (S : set R) : ideal R :=
     intros I _,
     exact I.zero_mem',
   end,
-  add_mem' := sorry,
-  smul_mem' := sorry,
+  add_mem' := begin
+    intros a b ha hb,
+    intros I hSI,
+    specialize ha I hSI,
+    specialize hb I hSI,
+    exact I.add_mem' ha hb,  
+  end,
+  smul_mem' := begin
+    intros c x hx,
+    intros I hSI,
+    specialize hx I hSI,
+    exact I.smul_mem' c hx,
+  end,
 }
 
+-- the unique map from the empty set (type) to any type:
+def fempty (N : Type) : (empty → N) :=
+begin
+  intro h,
+  cases h,
+end
+
+/-
+def ideal_of_subset' {R : Type} [comm_semiring R] (S : set R) : ideal R :=
+{
+  carrier := {lin_comb | ∃ N : Type, ∃ r : N → R, ∃ s : N → S, ∃ n : finset N, lin_comb = ∑ i in n, r i * s i},
+  zero_mem' := begin
+    use empty,
+    use fempty R,
+    use fempty S,
+    use ⊤,
+    ring_nf,
+  end,
+  add_mem' := begin
+    intros a b ha hb,
+    cases ha with Na ha,
+    cases ha with ra ha,
+    cases ha with sa ha,
+    cases ha with na ha,
+    cases hb with Nb hb,
+    cases hb with rb hb,
+    cases hb with sb hb,
+    cases hb with nb hb,
+    use sum Na Nb,
+    have r : sum Na Nb → R := {
+      λ x,
+      | sum.inl x = ra x
+      | sum.inr x = rb x
+    },
+    use (λ x, r x ),
+  end,
+  smul_mem' := begin
+    intros c x hx,
+    intros I hSI,
+    specialize hx I hSI,
+    exact I.smul_mem' c hx,
+  end,
+}
+-/
+
 notation `⟨` S `⟩` := ideal_of_subset S 
+
+lemma mem_ideal_of_iff {R : Type} [comm_semiring R] {S : set R} {x : R} : 
+  x ∈ ⟨S⟩ ↔ ∃ N : Type, ∃ r : N → R, ∃ s : N → S, ∃ n : finset N, x = ∑ i in n, r i * s i :=
+begin
+  split,
+  {
+    sorry,
+  },
+  {
+    intro h,
+    intros I hSI,
+    sorry
+  }
+end
 
 lemma ideal_of_extensive {R : Type} [comm_semiring R] (S : set R) : S ⊆ ⟨S⟩ :=
 begin
