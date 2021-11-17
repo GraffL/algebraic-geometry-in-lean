@@ -7,7 +7,7 @@ universe u
 -- Show that in a galois connection fg the right adjoint g preserves meets
 
 lemma gPreservesMeets {A B : Type u} {f: A → B} {g: B → A} [partial_order A] [partial_order B] [gc : galois_connection f g] 
-      (M : set B) (m : B) (h : isMeet M m) : (isMeet {a : A | ∃ b ∈ M, g b = a} (g m) ) :=
+      (M : set B) (m : B) (h : isMeet M m) : (isMeet (g '' M) (g m) ) :=
 begin
   split,
   {
@@ -43,7 +43,7 @@ end
 -- exercise 5(b)
 -- Show that in a galois connection fg the left adjoint f preserves joins
 lemma fPreservesJoins {A B : Type u} {f: A → B} {g: B → A} [partial_order A] [partial_order B] [gc : galois_connection f g] 
-      (N : set A) (n : A) (h : isJoin N n) : (isJoin {b : B | ∃ a ∈ N, f a = b} (f n) ) :=
+      (N : set A) (n : A) (h : isJoin N n) : (isJoin (f '' N) (f n) ) :=
 begin
   split,
   {
